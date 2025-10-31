@@ -1,9 +1,9 @@
 #!bin/bash
 
 # Create Directories
-mkdir data
-mkdir ref_genome
-mkdir results
+mkdir -p data
+mkdir -p ref_genome
+mkdir -p results
 
 # Download the data if not already done so
 echo "  Downloading reads data and ref genome  "
