@@ -5,13 +5,22 @@ mkdir -p data
 mkdir -p ref_genome
 mkdir -p results
 
-# Download the data if not already done so
-echo "  Downloading reads data and ref genome  "
+# Option to include read files by the user
+DEFAULT_READ1_URL="https://ftp.sra.ebi.ac.uk/vol1/fastq/SRR258/007/SRR2584867/SRR2584867_1.fastq.gz"
+DEFAULT_READ2_URL="https://ftp.sra.ebi.ac.uk/vol1/fastq/SRR258/007/SRR2584867/SRR2584867_2.fastq.gz"
 
-curl -o data/read1.fastq.gz https://ftp.sra.ebi.ac.uk/vol1/fastq/SRR258/007/SRR2584867/SRR2584867_1.fastq.gz
+# Check if custom read URLs are provided as arguments
+if [ "$1" ] && [ "$2" ]; then
+    READ1_URL=$1
+    READ2_URL=$2
+    echo "Using custom read data URLs provided by user."
+else
+    READ1_URL=$DEFAULT_READ1_URL
+    READ2_URL=$DEFAULT_READ2_URL
+    echo "Using default read data URLs for E. coli strain K-12 MG1655."
+fi
 
-curl -o data/read2.fastq.gz https://ftp.sra.ebi.ac.uk/vol1/fastq/SRR258/007/SRR2584867/SRR2584867_2.fastq.gz
-
+# Downloading ref genome
 curl -o ref_genome/ref_genome.fna.gz https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/017/985/GCF_000017985.1_ASM1798v1/GCF_000017985.1_ASM1798v1_genomic.fna.gz
 
 echo "Data Download Successful"
@@ -35,7 +44,7 @@ bwa mem ref_genome/ref_genome.fna data/read1.fastq data/read2.fastq >results/ali
 
 
 # Convert, Sort, and Index BAM
-echo "Converting SAM to BAM, sorting, and indexing..."
+echo "Converting SAM to BAM, sorting, and indexing"
 
 samtools view -Sb results/aligned.sam > results/aligned.bam
 
